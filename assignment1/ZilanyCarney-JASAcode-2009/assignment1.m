@@ -1,5 +1,4 @@
 % model fiber parameters
-clear all;
 CF = 500; % CF in Hz;
 CF1 = 4000;
 cohc  = 1.0;   % normal ohc function
@@ -19,40 +18,60 @@ nrep = 50;               % number of stimulus repetitions (e.g., 50);
 psthbinwidth = 0.5e-3; % binwidth in seconds;
 
 % Experiments
-freqRange = 62.5*2.^[0:1.0/8:9];
-intensityRange = [-150:10:150];
+freqRange = 62.5*2.^(0:1.0/8:9);
+intensityRange = -10:10:150;
 
 %% 
 %  Experiment 1
-
-experimentData = zeros(1,length(intensityRange));
-
-figure
 % ANF model 1
-for i=1:length(freqRange)
+tic;
+experimentData = zeros(length(freqRange),length(intensityRange));
+
+parfor i=1:length(freqRange)
+    experimentDataTemp = zeros(1,length(intensityRange));
     for j=1:length(intensityRange)
         freq = freqRange(i);
         intensity = intensityRange(j);
         pin = generateStimulus(freq, Fs, T, rt, intensity);
         [synout, psth] = ANModel(nrep, pin, CF, Fs, T, cohc, cihc, fiberType,implnt); 
-        experimentData(1,j) = sum(psth);
+        experimentDataTemp(1,j) = sum(psth);
     end
-    plot(intensityRange, experimentData)
+    experimentData(i,:) = experimentDataTemp;    
+end
+toc;
+%%
+
+figure
+hold on;
+for i=1:length(freqRange)
+    plot(intensityRange,experimentData(i,:));
 end
 
 
-figure
 
-% ANF model 1
-for i=1:length(freqRange)
+%%
+% Model 2
+tic;
+parfor i=1:length(freqRange)
+    experimentDataTemp = zeros(1,length(intensityRange));
     for j=1:length(intensityRange)
         freq = freqRange(i);
         intensity = intensityRange(j);
-        stim = generateStimulus(freq, Fs, T, rt, intensity);
-        [synout, psth] = ANModel(nrep, stim, CF1, Fs, T, cohc, cihc, fiberType); 
-        experimentData(1,j) = sum(psth);
+        pin = generateStimulus(freq, Fs, T, rt, intensity);
+        [synout, psth] = ANModel(nrep, pin, CF1, Fs, T, cohc, cihc, fiberType,implnt); 
+        experimentDataTemp(1,j) = sum(psth);
     end
-    plot(intensityRange, experimentData)
-endfor
+    experimentData(i,:) = experimentDataTemp;    
+end
+
+%%
+
+figure
+hold on;
+for i=1:length(freqRange)
+    plot(intensityRange,experimentData(i,:));
+end
+toc;
+
 
 

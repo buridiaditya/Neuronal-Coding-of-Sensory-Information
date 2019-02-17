@@ -1,4 +1,3 @@
-
 function pin = generateStimulus(F0,Fs, T, rt, stimdb)
     t = 0:1/Fs:T-1/Fs; % time vector
     
@@ -9,4 +8,4 @@ function pin = generateStimulus(F0,Fs, T, rt, stimdb)
     pin(1:irpts)=pin(1:irpts).*(0:(irpts-1))/irpts; 
     pin((mxpts-irpts):mxpts)=pin((mxpts-irpts):mxpts).*(irpts:-1:0)/irpts;
 
-endfunction
+end
