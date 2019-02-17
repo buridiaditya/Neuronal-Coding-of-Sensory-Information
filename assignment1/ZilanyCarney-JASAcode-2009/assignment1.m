@@ -73,5 +73,28 @@ for i=1:length(freqRange)
 end
 toc;
 
+%%
+
+figure
+hold on;
+
+for j=1:length(intensityRange)    
+    intensity = intensityRange(j);
+    pin = generateStimulus(CF, Fs, T, rt, intensity);
+    [synout, psth] = ANModel(nrep, pin, CF, Fs, T, cohc, cihc, fiberType,implnt); 
+    experimentData(1,j) = sum(psth);
+end
+
+plot(intensityRange,experimentData(1,:),'DisplayName','BF=500');
+
+for j=1:length(intensityRange)    
+    intensity = intensityRange(j);
+    pin = generateStimulus(CF1, Fs, T, rt, intensity);
+    [synout, psth] = ANModel(nrep, pin, CF1, Fs, T, cohc, cihc, fiberType,implnt); 
+    experimentData(1,j) = sum(psth);
+end
+
+plot(intensityRange,experimentData(1,:),'DisplayName','BF=4khz');
+legend();
 
 

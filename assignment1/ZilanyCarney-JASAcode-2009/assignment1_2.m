@@ -60,27 +60,38 @@ for j=1:length(intensityRange)
     [synout, psth] = ANModel(nrep, pin, CF, Fs, length(pin)/Fs, cohc, cihc, fiberType,implnt); 
     experimentData(1,j) = sum(psth);
 end
+
+
+plot(intensityRange, experimentData,'DisplayName','ah sound')
+
+for j=1:length(intensityRange)
+    intensity = intensityRange(j);
+    pin = generateStimulus(CF, Fs, length(clippedAudio)/Fs, rt, intensity);
+    [synout, psth] = ANModel(nrep, pin, CF, Fs, length(pin)/Fs, cohc, cihc, fiberType,implnt); 
+    experimentData(1,j) = sum(psth);
+end
 toc;
+plot(intensityRange, experimentData,'DisplayName','BF tone')
 
-plot(intensityRange, experimentData)
-
-
+legend()
 %%
-sound1 = sqrt(2)*20e-6*10^(intensity1/20.0)* audio /Rmsvalue;
-sound2 = sqrt(2)*20e-6*10^(intensity2/20.0)* audio /Rmsvalue;
-sound3 = sqrt(2)*20e-6*10^(intensity3/20.0)* audio /Rmsvalue;
+% 40, 100, 190
+
+sound1 = sqrt(2)*20e-6*10^(40/20.0)* audio /Rmsvalue;
+sound2 = sqrt(2)*20e-6*10^(100/20.0)* audio /Rmsvalue;
+sound3 = sqrt(2)*20e-6*10^(190/20.0)* audio /Rmsvalue;
 
 
 %%
 
 % ANF model 1
 for i=1:length(frequencyBag)
-    CF = freqRange(i);
-    %intensity = intensityRange(j);
+    CF = frequencyBag(i);
     [synout, psth] = ANModel(nrep, sound1, CF, Fs, T, cohc, cihc, fiberType,implnt); 
-    plot(psth)    
+    
 end
 
+%%
 %%%%%%%%
 
 nfft = 4096;
