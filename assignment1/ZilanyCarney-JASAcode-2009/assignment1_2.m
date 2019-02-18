@@ -16,7 +16,7 @@ nrep = 50;               % number of stimulus repetitions (e.g., 50);
 psthbinwidth = 0.5e-3; % binwidth in seconds;
 
 %
-frequencyBag = 62.5*2.^(0:1/8:7);
+frequencyBag = 80*2.^(0:1/8:7);
 intensityRange = -50:10:200;
 
 %%
@@ -81,33 +81,59 @@ sound1 = sqrt(2)*20e-6*10^(40/20.0)* audio /Rmsvalue;
 sound2 = sqrt(2)*20e-6*10^(100/20.0)* audio /Rmsvalue;
 sound3 = sqrt(2)*20e-6*10^(190/20.0)* audio /Rmsvalue;
 
+%%
+window = 25.6e-3*Fs;
+noverlap = window/2;
+figure;
+
+spectrogram(audio, window, noverlap, window, Fs, 'yaxis')
+set(gca,'Yscale','log')
 
 %%
 
+window = 16e-3*Fs;
+overlap = window/2;
+
+[synout, psth1] = ANModel(nrep, audio', CF, Fs, length(audio)/Fs, cohc, cihc, fiberType,implnt);     
+psth1 = processPSTH(psth1, window, overlap);
+experimentData = zeros(length(frequencyBag), length(psth1));
+
+%%
+tic;
 % ANF model 1
-for i=1:length(frequencyBag)
+parfor i=1:length(frequencyBag)
     CF = frequencyBag(i);
-    [synout, psth] = ANModel(nrep, sound1, CF, Fs, T, cohc, cihc, fiberType,implnt); 
-    
+    [synout, psth] = ANModel(nrep, sound1', CF, Fs, length(sound1)/Fs, cohc, cihc, fiberType,implnt);     
+    psth = processPSTH(psth, window, overlap);
+    experimentData(i,:) = psth;
 end
+toc;
+figure;
+imagesc('XData', [1,length(psth1)], 'YData', [frequencyBag(1), frequencyBag(length(frequencyBag))], 'CData', flipud(experimentData))
 
 %%
-%%%%%%%%
-
-nfft = 4096;
-win = 25.6*e-3;
-
-% Spectrogram
-[s,f,t] = stft(audio, win, win/2, nfft, Fs);
-
-plot(t, f, s) %% Figure out how to use color
-
-for i=1:length(frequencyBag)
-    CF = freqRange(i);
-    %intensity = intensityRange(j);
-    [synout, psth] = ANModel(nrep, sound1, CF, Fs, T, cohc, cihc, fiberType,implnt); 
-    plot(t,frequencyBag, psth) %% Figure out how to use color
-        
+tic;
+% ANF model 1
+parfor i=1:length(frequencyBag)
+    CF = frequencyBag(i);
+    [synout, psth] = ANModel(nrep, sound2', CF, Fs, length(sound2)/Fs, cohc, cihc, fiberType,implnt);     
+    psth = processPSTH(psth, window, overlap);
+    experimentData(i,:) = psth;
 end
+toc;
+figure;
+imagesc('XData', [1,length(psth1)], 'YData', [frequencyBag(1), frequencyBag(length(frequencyBag))], 'CData', flipud(experimentData))
 
-%% 
+%%
+tic;
+% ANF model 1
+parfor i=1:length(frequencyBag)
+    CF = frequencyBag(i);
+    [synout, psth] = ANModel(nrep, sound3', CF, Fs, length(sound3)/Fs, cohc, cihc, fiberType,implnt);     
+    psth = processPSTH(psth, window, overlap);
+    experimentData(i,:) = psth;
+end
+toc;
+figure;
+imagesc('XData', [1,length(psth1)], 'YData', [frequencyBag(1), frequencyBag(length(frequencyBag))], 'CData', flipud(experimentData))
+

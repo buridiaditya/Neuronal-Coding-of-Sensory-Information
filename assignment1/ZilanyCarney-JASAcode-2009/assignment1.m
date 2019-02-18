@@ -8,7 +8,7 @@ implnt = 0;    % "0" for approximate or "1" for actual implementation of the pow
 
 % stimulus parameters
 F0 = CF;     % stimulus frequency in Hz
-Fs = 10e3;  % sampling rate in Hz (must be 100, 200 or 500 kHz)
+Fs = 100e3;  % sampling rate in Hz (must be 100, 200 or 500 kHz)
 T  = 200e-3;  % stimulus duration in seconds
 rt = 10e-3;   % rise/fall time in seconds
 stimdb = 10; % stimulus intensity in dB SPL
@@ -19,7 +19,7 @@ psthbinwidth = 0.5e-3; % binwidth in seconds;
 
 % Experiments
 freqRange = 62.5*2.^(0:1.0/8:9);
-intensityRange = -10:10:150;
+intensityRange = -10:10:80;
 
 %% 
 %  Experiment 1
@@ -43,9 +43,13 @@ toc;
 
 figure
 hold on;
-for i=1:length(freqRange)
-    plot(intensityRange,experimentData(i,:));
-end
+
+%for i=1:length(freqRange)
+%    plot(intensityRange,experimentData(i,:));
+%end
+
+
+imagesc(gca, [freqRange(1), freqRange(length(freqRange))], [intensityRange(1) , intensityRange(length(intensityRange))] , experimentData');
 
 
 
@@ -68,9 +72,12 @@ end
 
 figure
 hold on;
-for i=1:length(freqRange)
-    plot(intensityRange,experimentData(i,:));
-end
+%for i=1:length(freqRange)
+%    plot(intensityRange,experimentData(i,:));
+%end
+
+imagesc([freqRange(1), freqRange(length(freqRange))], [intensityRange(1) , intensityRange(length(intensityRange))] , experimentData');
+
 toc;
 
 %%
