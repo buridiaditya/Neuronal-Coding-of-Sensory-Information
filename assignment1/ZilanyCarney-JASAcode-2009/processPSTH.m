@@ -3,10 +3,10 @@ function procPSTH = processPSTH(psth, binwidth, overlap)
     procPSTH = zeros(1,length(indices));
     
     for i=1:length(indices)
-        if indices(i)+binwidth > length(psth)
+        if indices(i)+binwidth-1 > length(psth)
             procPSTH(i) = sum(psth(indices(i):end));
         else        
-            procPSTH(i) = sum(psth(indices(i):1:(indices(i)+binwidth)));
+            procPSTH(i) = sum(psth(indices(i):(indices(i)+binwidth-1)));
         end
     end
     
