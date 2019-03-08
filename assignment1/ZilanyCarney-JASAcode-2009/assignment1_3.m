@@ -45,11 +45,14 @@ parfor i=2:length(frequencyBag)
     experimentData(i,:) = psth;
 end
 toc;
+%%
 figure;
 
 imagesc('XData', [1,length(psth)], 'YData', [frequencyBag(1), frequencyBag(length(frequencyBag))], 'CData', flipud(experimentData))
+ytick = 80*2.^(0:1/8:7);
+set(gca,'YTick',ytick);
 hold on;
-
+%%
 tic;
 % ANF model 1
 parfor i=1:length(frequencyBag1)
@@ -74,6 +77,7 @@ t = (0:L-1)*T;
 L1 = length(experimentData1(1,:));
 
 for i=1:length(frequencyBag1)
+    col = rand(1,3);
     for j=1:length(indices)
         if indices(j)+fftWindow-1 > L1
             Y = fft(experimentData1(i,indices(j):end));   
@@ -88,10 +92,12 @@ for i=1:length(frequencyBag1)
         P1(2:end-1) = 2*P1(2:end-1);
         f = Fs*(0:(L/2))/L;
         [argval, argmax] = max(P1);
-        if j > 1
-            plot((indices(j-1) + indices(j))/2, f(argmax),'*')
-        else
-            plot((indices(j))/2, f(argmax),'*')
+        if f(argmax) < 20000 && f(argmax) ~= 0
+            if j > 1
+                plot((indices(j-1) + indices(j))/2, f(argmax),'*','color',col)
+            else
+                plot((indices(j))/2, f(argmax),'*','color',col)
+            end
         end
         
     end
